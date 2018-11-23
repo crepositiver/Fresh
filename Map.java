@@ -1,28 +1,3 @@
-/*
- * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
- * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- */
-
 package java.util;
 
 import java.util.function.BiConsumer;
@@ -31,83 +6,28 @@ import java.util.function.Function;
 import java.io.Serializable;
 
 /**
- * An object that maps keys to values.  A map cannot contain duplicate keys;
- * each key can map to at most one value. 
- *
  * 键值映射对象。map不能包含相同的key,每个key最多映射到一个value。
  *
- * <p>This interface takes the place of the <tt>Dictionary</tt> class, which
- * was a totally abstract class rather than an interface.
- *
  * 这个接口替代抽象类Dictionary
- *
- * <p>The <tt>Map</tt> interface provides three <i>collection views</i>, which
- * allow a map's contents to be viewed as a set of keys, collection of values,
- * or set of key-value mappings.  The <i>order</i> of a map is defined as
- * the order in which the iterators on the map's collection views return their
- * elements.  Some map implementations, like the <tt>TreeMap</tt> class, make
- * specific guarantees as to their order; others, like the <tt>HashMap</tt>
- * class, do not.
  *
  * map提供了三种collection视图，允许以键集、值集和键值映射集来查看。map的顺序定义
  * 为迭代器在map的collection视图上返回元素的顺序。有些map的实现可保证它们的顺序，
  * 例如TreeMap。其它的则不保证顺序，例如HashMap。
- *
- * <p>Note: great care must be exercised if mutable objects are used as map
- * keys.  The behavior of a map is not specified if the value of an object is
- * changed in a manner that affects <tt>equals</tt> comparisons while the
- * object is a key in the map.  A special case of this prohibition is that it
- * is not permissible for a map to contain itself as a key.  While it is
- * permissible for a map to contain itself as a value, extreme caution is
- * advised: the <tt>equals</tt> and <tt>hashCode</tt> methods are no longer
- * well defined on such a map.
  *
  * 注意：可变对象做为key需要特别小心。如果一个对象的值被手动改变而影响了equals
  * 比较方法，当这个对象是map的key时，此时map的行为将不保证。这项禁令的特殊情况
  * 是为了不允许map将它本身做为key。虽然允许map将它本身做为value.极端谨慎的建议
  * 是：map中equals和hashCode方法的定义不是很明确。
  *
- * <p>All general-purpose map implementation classes should provide two
- * "standard" constructors: a void (no arguments) constructor which creates an
- * empty map, and a constructor with a single argument of type <tt>Map</tt>,
- * which creates a new map with the same key-value mappings as its argument.
- * In effect, the latter constructor allows the user to copy any map,
- * producing an equivalent map of the desired class.  There is no way to
- * enforce this recommendation (as interfaces cannot contain constructors) but
- * all of the general-purpose map implementations in the JDK comply.
- *
  * 所有map的实现类都应该提供2个"标准"的构造方法：一个无参构造方法来创建一个空
  * map。一个单个map类型的参数的构造方法来创建一个新的并且包含此参数内容的map。
  * 实际上，后一个构造方法允许用户复制任何map,产生一个期望的与之相等的map。虽然
  * 不能强制执行此建议(接口中不能包含构造方法),但是所有map的实现类都应当遵守它。
  *
- * <p>The "destructive" methods contained in this interface, that is, the
- * methods that modify the map on which they operate, are specified to throw
- * <tt>UnsupportedOperationException</tt> if this map does not support the
- * operation.  If this is the case, these methods may, but are not required
- * to, throw an <tt>UnsupportedOperationException</tt> if the invocation would
- * have no effect on the map.  For example, invoking the {@link #putAll(Map)}
- * method on an unmodifiable map may, but is not required to, throw the
- * exception if the map whose mappings are to be "superimposed" is empty.
- *
  * 接口中包含的"破坏"方法可修改映射，如果不支持此操作可以抛出UnsupportedOperationException
  * 异常。如果是这样，那么在调用这个方法修改无效时，不强制一定要抛出UnsupportedOperationException
  * 异常。例如，在不可修改的map中调用putAll(Map)方法，map映射关系重叠并且为空时，
  * 可以但不强制抛出这个异常。
- *
- * <p>Some map implementations have restrictions on the keys and values they
- * may contain.  For example, some implementations prohibit null keys and
- * values, and some have restrictions on the types of their keys.  Attempting
- * to insert an ineligible key or value throws an unchecked exception,
- * typically <tt>NullPointerException</tt> or <tt>ClassCastException</tt>.
- * Attempting to query the presence of an ineligible key or value may throw an
- * exception, or it may simply return false; some implementations will exhibit
- * the former behavior and some will exhibit the latter.  More generally,
- * attempting an operation on an ineligible key or value whose completion
- * would not result in the insertion of an ineligible element into the map may
- * throw an exception or it may succeed, at the option of the implementation.
- * Such exceptions are marked as "optional" in the specification for this
- * interface.
  *
  * 一些Map的实现限制了key和value的值。例如，某些禁止key和value为null，另一些
  * 限制了key的类型。试图插入一个不合格的key或value将会抛出未检异常，通常是NullPointerException
@@ -116,36 +36,12 @@ import java.io.Serializable;
  * 操作，操作完成也不会插入不合法的元素到map中。操作可能抛出一个异常或者成功，取决于这个实现的选择。
  * 接口中这样的异常被标志为“可选的”。
  *
- * <p>Many methods in Collections Framework interfaces are defined
- * in terms of the {@link Object#equals(Object) equals} method.  For
- * example, the specification for the {@link #containsKey(Object)
- * containsKey(Object key)} method says: "returns <tt>true</tt> if and
- * only if this map contains a mapping for a key <tt>k</tt> such that
- * <tt>(key==null ? k==null : key.equals(k))</tt>." This specification should
- * <i>not</i> be construed to imply that invoking <tt>Map.containsKey</tt>
- * with a non-null argument <tt>key</tt> will cause <tt>key.equals(k)</tt> to
- * be invoked for any key <tt>k</tt>.  Implementations are free to
- * implement optimizations whereby the <tt>equals</tt> invocation is avoided,
- * for example, by first comparing the hash codes of the two keys.  (The
- * {@link Object#hashCode()} specification guarantees that two objects with
- * unequal hash codes cannot be equal.)  More generally, implementations of
- * the various Collections Framework interfaces are free to take advantage of
- * the specified behavior of underlying {@link Object} methods wherever the
- * implementor deems it appropriate.
- *
  * 集合框架接口中的一些方法是根据equals定义的。例如，containsKey(Object key)方法中写
  * 到：当前仅当map包含的映射关系满足 (key==null ? k==null : key.equals(k)) 时返回true。
  * 不应该被解释为传入任何非空参数key调用Map.containsKey将导致key.equals(k)被调用。
  * 实现可随意进行优化，以避免调用equals方法，例如可以首先比较两个key的哈希码。
  *（Object.hashCode() 规范保证哈希码不相等的两个对象不会相等）
  * 通常来说，各种集合框架接口的实现可以自由地利用底层{@link Object}方法的指定行为，只要实现者认为合适。
- *
- * <p>Some map operations which perform recursive traversal of the map may fail
- * with an exception for self-referential instances where the map directly or
- * indirectly contains itself. This includes the {@code clone()},
- * {@code equals()}, {@code hashCode()} and {@code toString()} methods.
- * Implementations may optionally handle the self-referential scenario, however
- * most current implementations do not do so.
  *
  * 一些对map递归遍历的操作可能会失败，是由于map直接或间接包含本身出现自引用的异常。
  * 包括clone()、equals()、hashCode()和toString()方法。map实现可选的处理这些自引用代码，
@@ -168,21 +64,19 @@ import java.io.Serializable;
  * @since 1.2
  */
 public interface Map<K,V> {
-    // Query Operations
+    // 查询操作
 
     /**
-     * Returns the number of key-value mappings in this map.  If the
-     * map contains more than <tt>Integer.MAX_VALUE</tt> elements, returns
-     * <tt>Integer.MAX_VALUE</tt>.
+     * 返回map中的key-value映射数量，如果数量大于 Integer.MAX_VALUE 则返回 Integer.MAX_VALUE
      *
-     * @return the number of key-value mappings in this map
+     * @return map中的key-value映射数量
      */
     int size();
 
     /**
-     * Returns <tt>true</tt> if this map contains no key-value mappings.
+     * 如果map中不包含kay-value映射则返回true
      *
-     * @return <tt>true</tt> if this map contains no key-value mappings
+     * @return 如果map中不包含kay-value映射则返回true
      */
     boolean isEmpty();
 
@@ -192,6 +86,9 @@ public interface Map<K,V> {
      * this map contains a mapping for a key <tt>k</tt> such that
      * <tt>(key==null ? k==null : key.equals(k))</tt>.  (There can be
      * at most one such mapping.)
+     *
+     * 如果map中某个映射的key是此指定值则返回true。
+     * 进一步说，当前仅当map中包含的映射与此key满足：(key==null ? k==null : key.equals(k)) 关系，则返回true(最多存在这样的一个映射)
      *
      * @param key key whose presence in this map is to be tested
      * @return <tt>true</tt> if this map contains a mapping for the specified
