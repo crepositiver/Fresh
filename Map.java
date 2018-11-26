@@ -47,21 +47,6 @@ import java.io.Serializable;
  * 包括clone()、equals()、hashCode()和toString()方法。map实现可选的处理这些自引用代码，
  * 然而大部分当前的实现不会这么做。
  *
- * <p>This interface is a member of the
- * <a href="{@docRoot}/../technotes/guides/collections/index.html">
- * Java Collections Framework</a>.
- *
- * @param <K> the type of keys maintained by this map
- * @param <V> the type of mapped values
- *
- * @author  Josh Bloch
- * @see HashMap
- * @see TreeMap
- * @see Hashtable
- * @see SortedMap
- * @see Collection
- * @see Set
- * @since 1.2
  */
 public interface Map<K,V> {
     // 查询操作
@@ -81,44 +66,25 @@ public interface Map<K,V> {
     boolean isEmpty();
 
     /**
-     * Returns <tt>true</tt> if this map contains a mapping for the specified
-     * key.  More formally, returns <tt>true</tt> if and only if
-     * this map contains a mapping for a key <tt>k</tt> such that
-     * <tt>(key==null ? k==null : key.equals(k))</tt>.  (There can be
-     * at most one such mapping.)
-     *
      * 如果map中某个映射的key是此指定值则返回true。
      * 进一步说，当前仅当map中包含的映射与此key满足：(key==null ? k==null : key.equals(k)) 关系，则返回true(最多存在这样的一个映射)
      *
-     * @param key key whose presence in this map is to be tested
-     * @return <tt>true</tt> if this map contains a mapping for the specified
-     *         key
-     * @throws ClassCastException if the key is of an inappropriate type for
-     *         this map
-     * (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
-     * @throws NullPointerException if the specified key is null and this map
-     *         does not permit null keys
-     * (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
+     * @param key 用来校验map中是否存在key
+     * @return 如果map中包含的某个映射存在指定的key则返回true
+     * @throws ClassCastException 如果key不是map中正确的类型
+     * @throws NullPointerException 如果key为空并且map中不允许null类型的key
      */
     boolean containsKey(Object key);
 
     /**
-     * Returns <tt>true</tt> if this map maps one or more keys to the
-     * specified value.  More formally, returns <tt>true</tt> if and only if
-     * this map contains at least one mapping to a value <tt>v</tt> such that
-     * <tt>(value==null ? v==null : value.equals(v))</tt>.  This operation
-     * will probably require time linear in the map size for most
-     * implementations of the <tt>Map</tt> interface.
+     * 如果map中的一个或多个映射到此指定的值则返回true。进一步说，当且仅当map中至少一个
+     * 映射到此值，满足：(value==null ? v==null : value.equals(v))关系。对于大部分map
+     * 的实现来说，这个操作耗时与map的size呈线性关系。
      *
-     * @param value value whose presence in this map is to be tested
-     * @return <tt>true</tt> if this map maps one or more keys to the
-     *         specified value
-     * @throws ClassCastException if the value is of an inappropriate type for
-     *         this map
-     * (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
-     * @throws NullPointerException if the specified value is null and this
-     *         map does not permit null values
-     * (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
+     * @param value 用来校验map中是否存在value
+     * @return 如果map中的映射有一个或多个到value,则返回true
+     * @throws 如果value不是map中正确的类型
+     * @throws NullPointerException 如果value为空并且map中不允许null类型的value
      */
     boolean containsValue(Object value);
 
