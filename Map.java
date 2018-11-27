@@ -89,57 +89,36 @@ public interface Map<K,V> {
     boolean containsValue(Object value);
 
     /**
-     * Returns the value to which the specified key is mapped,
-     * or {@code null} if this map contains no mapping for the key.
+     * 如果map中不包含key则返回null,否则返回key映射的value
      *
-     * <p>More formally, if this map contains a mapping from a key
-     * {@code k} to a value {@code v} such that {@code (key==null ? k==null :
-     * key.equals(k))}, then this method returns {@code v}; otherwise
-     * it returns {@code null}.  (There can be at most one such mapping.)
+     * 进一步说，如果map包含的某个k映射到v,满足关系：(key==null ? k==null : key.equals(k))，
+     * 则返回v。否则返回null。(至多存在一个此映射)
      *
-     * <p>If this map permits null values, then a return value of
-     * {@code null} does not <i>necessarily</i> indicate that the map
-     * contains no mapping for the key; it's also possible that the map
-     * explicitly maps the key to {@code null}.  The {@link #containsKey
-     * containsKey} operation may be used to distinguish these two cases.
+     * 如果map允许value为null,则返回null不代表map中没有此key的映射。因为有可能
+     * 此key的映射值就是null。containsKey方法可用来区分此两种情况。
      *
-     * @param key the key whose associated value is to be returned
-     * @return the value to which the specified key is mapped, or
-     *         {@code null} if this map contains no mapping for the key
-     * @throws ClassCastException if the key is of an inappropriate type for
-     *         this map
-     * (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
-     * @throws NullPointerException if the specified key is null and this map
-     *         does not permit null keys
-     * (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
+     * @param key 与将会被返回的value所关联的key
+     * @return 所映射的value。如果map中不包含key则返回null
+     * @throws ClassCastException 如果key是map中不合适的类型
+     * @throws NullPointerException 如果key为空并且map中不允许null类型的key
      */
     V get(Object key);
 
-    // Modification Operations
+    // 修改操作
 
     /**
-     * Associates the specified value with the specified key in this map
-     * (optional operation).  If the map previously contained a mapping for
-     * the key, the old value is replaced by the specified value.  (A map
-     * <tt>m</tt> is said to contain a mapping for a key <tt>k</tt> if and only
-     * if {@link #containsKey(Object) m.containsKey(k)} would return
-     * <tt>true</tt>.)
+     * map中key关联value。如果map中已包含此key的映射关系，则用value来替代老的value。
+     * 当前仅当 containsKey(Object) 返回true时才表示map包含此key的映射关系。
      *
-     * @param key key with which the specified value is to be associated
-     * @param value value to be associated with the specified key
-     * @return the previous value associated with <tt>key</tt>, or
-     *         <tt>null</tt> if there was no mapping for <tt>key</tt>.
-     *         (A <tt>null</tt> return can also indicate that the map
-     *         previously associated <tt>null</tt> with <tt>key</tt>,
-     *         if the implementation supports <tt>null</tt> values.)
-     * @throws UnsupportedOperationException if the <tt>put</tt> operation
-     *         is not supported by this map
-     * @throws ClassCastException if the class of the specified key or value
-     *         prevents it from being stored in this map
-     * @throws NullPointerException if the specified key or value is null
-     *         and this map does not permit null keys or values
-     * @throws IllegalArgumentException if some property of the specified key
-     *         or value prevents it from being stored in this map
+     * @param key 关联value的key
+     * @param value key所关联的value
+     * @return 如果map没有关于此key的映射则返回null,否则返回之前的value。
+     * (如果map的实现支持value为null,则返回null也能表示之前的key映射的value为null)
+     *
+     * @throws UnsupportedOperationException 如果不支持put操作
+     * @throws ClassCastException 如果key或value的类型不能存储在map中
+     * @throws NullPointerException 如果key或value为空并且map中不允许null类型的key和value
+     * @throws IllegalArgumentException 如果key或value的某些属性不能存储在map中
      */
     V put(K key, V value);
 
