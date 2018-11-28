@@ -123,122 +123,74 @@ public interface Map<K,V> {
     V put(K key, V value);
 
     /**
-     * Removes the mapping for a key from this map if it is present
-     * (optional operation).   More formally, if this map contains a mapping
-     * from key <tt>k</tt> to value <tt>v</tt> such that
-     * <code>(key==null ?  k==null : key.equals(k))</code>, that mapping
-     * is removed.  (The map can contain at most one such mapping.)
+     * 如果map中存在关于key的映射则移除它。进一步说，如果map包含映射关系kv满足关系：(key==null ?  k==null : key.equals(k))则移除。
+     *(map最多包含一个这样的映射关系。)
      *
-     * <p>Returns the value to which this map previously associated the key,
-     * or <tt>null</tt> if the map contained no mapping for the key.
+     * 返回此映射中以前关联该键的值，如果此映射不包含该键的映射关系，则返回 null。
      *
-     * <p>If this map permits null values, then a return value of
-     * <tt>null</tt> does not <i>necessarily</i> indicate that the map
-     * contained no mapping for the key; it's also possible that the map
-     * explicitly mapped the key to <tt>null</tt>.
+     * 如果map允许value为null,则返回null不代表map中没有此key的映射。因为有可能
+     * 此key的映射值就是null。
      *
-     * <p>The map will not contain a mapping for the specified key once the
-     * call returns.
+     * 调用返回后，此映射将不再包含指定键的映射关系。
      *
-     * @param key key whose mapping is to be removed from the map
-     * @return the previous value associated with <tt>key</tt>, or
-     *         <tt>null</tt> if there was no mapping for <tt>key</tt>.
-     * @throws UnsupportedOperationException if the <tt>remove</tt> operation
-     *         is not supported by this map
-     * @throws ClassCastException if the key is of an inappropriate type for
-     *         this map
-     * (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
-     * @throws NullPointerException if the specified key is null and this
-     *         map does not permit null keys
-     * (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
+     * @param key 从map中移除其映射关系的键
+     * @return 以前与 key 关联的值；如果没有 key 的映射关系，则返回 null
+     * @throws UnsupportedOperationException 如果map不支持此操作
+     * @throws ClassCastException 如果该键对于此映射是不合适的类型
+     * @throws NullPointerException 如果指定键为 null 并且此映射不允许 null 键
      */
     V remove(Object key);
 
 
-    // Bulk Operations
+    // 批量操作
 
     /**
-     * Copies all of the mappings from the specified map to this map
-     * (optional operation).  The effect of this call is equivalent to that
-     * of calling {@link #put(Object,Object) put(k, v)} on this map once
-     * for each mapping from key <tt>k</tt> to value <tt>v</tt> in the
-     * specified map.  The behavior of this operation is undefined if the
-     * specified map is modified while the operation is in progress.
-     *
-     * @param m mappings to be stored in this map
-     * @throws UnsupportedOperationException if the <tt>putAll</tt> operation
-     *         is not supported by this map
-     * @throws ClassCastException if the class of a key or value in the
-     *         specified map prevents it from being stored in this map
-     * @throws NullPointerException if the specified map is null, or if
-     *         this map does not permit null keys or values, and the
-     *         specified map contains null keys or values
-     * @throws IllegalArgumentException if some property of a key or value in
-     *         the specified map prevents it from being stored in this map
+     * 从指定映射中将所有映射关系复制到此映射中（可选操作）。
+     * 相当于对指定映射中的每个键 k 到值 v 的映射关系，都在此map中调用一次 put(k, v)。
+     * 如果正在进行此操作的同时修改了指定的映射，则此操作的行为是不确定的。
+     * @param m 要存储在此映射中的映射关系
+     * @throws UnsupportedOperationException 如果此映射不支持 putAll 操作
+     * @throws ClassCastException 如果指定映射中的键或值的类不允许将其存储在此映射中
+     * @throws NullPointerException 如果指定映射为 null，或者此映射不允许 null 键或值，并且指定的映射包含 null 键或值
+     * @throws IllegalArgumentException  如果指定映射中的键或值的某些属性不允许将其存储在此映射中
      */
     void putAll(Map<? extends K, ? extends V> m);
 
     /**
-     * Removes all of the mappings from this map (optional operation).
-     * The map will be empty after this call returns.
+     * 从map中移除所有映射关系（可选操作）。此调用返回后，该映射将为空。
      *
-     * @throws UnsupportedOperationException if the <tt>clear</tt> operation
-     *         is not supported by this map
+     * @throws UnsupportedOperationException 如果此映射不支持 clear 操作
      */
     void clear();
 
 
-    // Views
+    // 视图
 
     /**
-     * Returns a {@link Set} view of the keys contained in this map.
-     * The set is backed by the map, so changes to the map are
-     * reflected in the set, and vice-versa.  If the map is modified
-     * while an iteration over the set is in progress (except through
-     * the iterator's own <tt>remove</tt> operation), the results of
-     * the iteration are undefined.  The set supports element removal,
-     * which removes the corresponding mapping from the map, via the
-     * <tt>Iterator.remove</tt>, <tt>Set.remove</tt>,
-     * <tt>removeAll</tt>, <tt>retainAll</tt>, and <tt>clear</tt>
-     * operations.  It does not support the <tt>add</tt> or <tt>addAll</tt>
-     * operations.
+     * 返回此映射中包含的键的 Set 视图。该 set 受映射支持，所以对映射的更改可在此 set 中反映出来，反之亦然。
+     * 如果对该 set 进行迭代的同时修改了映射（通过迭代器自己的 remove 操作除外），则迭代结果是不确定的。
+     * set 支持元素移除，通过 Iterator.remove、 Set.remove、 removeAll、 retainAll 和 clear 操作可从映射中移除相应的映射关系。
+     * 它不支持 add 或 addAll 操作。
      *
-     * @return a set view of the keys contained in this map
+     * @return 此映射中包含的键的 set 视图
      */
     Set<K> keySet();
 
     /**
-     * Returns a {@link Collection} view of the values contained in this map.
-     * The collection is backed by the map, so changes to the map are
-     * reflected in the collection, and vice-versa.  If the map is
-     * modified while an iteration over the collection is in progress
-     * (except through the iterator's own <tt>remove</tt> operation),
-     * the results of the iteration are undefined.  The collection
-     * supports element removal, which removes the corresponding
-     * mapping from the map, via the <tt>Iterator.remove</tt>,
-     * <tt>Collection.remove</tt>, <tt>removeAll</tt>,
-     * <tt>retainAll</tt> and <tt>clear</tt> operations.  It does not
-     * support the <tt>add</tt> or <tt>addAll</tt> operations.
+     * 返回此映射中包含的值的 Collection 视图。该 collection 受映射支持，所以对映射的更改可在此 collection 中反映出来，反之亦然。
+     * 如果对该 collection 进行迭代的同时修改了映射（通过迭代器自己的 remove 操作除外），则迭代结果是不确定的。
+     * collection 支持元素移除，通过 Iterator.remove、 Collection.remove、 removeAll、 retainAll 和 clear 操作可从映射中移除相应的映射关系。它不支持 add 或 addAll 操作。
      *
-     * @return a collection view of the values contained in this map
+     * @return 此映射中包含的值的 collection 视图
      */
     Collection<V> values();
 
     /**
-     * Returns a {@link Set} view of the mappings contained in this map.
-     * The set is backed by the map, so changes to the map are
-     * reflected in the set, and vice-versa.  If the map is modified
-     * while an iteration over the set is in progress (except through
-     * the iterator's own <tt>remove</tt> operation, or through the
-     * <tt>setValue</tt> operation on a map entry returned by the
-     * iterator) the results of the iteration are undefined.  The set
-     * supports element removal, which removes the corresponding
-     * mapping from the map, via the <tt>Iterator.remove</tt>,
-     * <tt>Set.remove</tt>, <tt>removeAll</tt>, <tt>retainAll</tt> and
-     * <tt>clear</tt> operations.  It does not support the
-     * <tt>add</tt> or <tt>addAll</tt> operations.
+     * 返回此映射中包含的映射关系的 Set 视图。该 set 受映射支持，所以对映射的更改可在此 set 中反映出来，反之亦然。
+     * 如果对该 set 进行迭代的同时修改了映射（通过迭代器自己的 remove 操作，或者通过对迭代器返回的映射项执行 setValue 操作除外），则迭代结果是不确定的。
+     * set 支持元素移除，通过 Iterator.remove、 Set.remove、 removeAll、 retainAll 和 clear 操作可从映射中移除相应的映射关系。它不支持 add 或 addAll 操作。
      *
-     * @return a set view of the mappings contained in this map
+     * @return 此映射中包含的映射关系的 set 视图
      */
     Set<Map.Entry<K, V>> entrySet();
 
@@ -252,8 +204,6 @@ public interface Map<K,V> {
      * modified after the entry was returned by the iterator, except through
      * the <tt>setValue</tt> operation on the map entry.
      *
-     * @see Map#entrySet()
-     * @since 1.2
      */
     interface Entry<K,V> {
         /**
@@ -411,34 +361,23 @@ public interface Map<K,V> {
         }
     }
 
-    // Comparison and hashing
+    // 对比和散列
 
     /**
-     * Compares the specified object with this map for equality.  Returns
-     * <tt>true</tt> if the given object is also a map and the two maps
-     * represent the same mappings.  More formally, two maps <tt>m1</tt> and
-     * <tt>m2</tt> represent the same mappings if
-     * <tt>m1.entrySet().equals(m2.entrySet())</tt>.  This ensures that the
-     * <tt>equals</tt> method works properly across different implementations
-     * of the <tt>Map</tt> interface.
+     * 比较指定的对象与此映射是否相等。如果给定的对象也是一个映射，并且这两个映射表示相同的映射关系，则返回 true。
+     * 更确切地讲，如果 m1.entrySet().equals(m2.entrySet())，则两个映射 m1 和 m2 表示相同的映射关系。
+     * 这可以确保 equals 方法在不同的 Map 接口实现间运行正常。
      *
-     * @param o object to be compared for equality with this map
-     * @return <tt>true</tt> if the specified object is equal to this map
+     * @param o 要与此映射进行相等性比较的对象
+     * @return <tt>true</tt> 如果指定的对象等于此映射，则返回 true
      */
     boolean equals(Object o);
 
     /**
-     * Returns the hash code value for this map.  The hash code of a map is
-     * defined to be the sum of the hash codes of each entry in the map's
-     * <tt>entrySet()</tt> view.  This ensures that <tt>m1.equals(m2)</tt>
-     * implies that <tt>m1.hashCode()==m2.hashCode()</tt> for any two maps
-     * <tt>m1</tt> and <tt>m2</tt>, as required by the general contract of
-     * {@link Object#hashCode}.
+     * 返回此映射的哈希码值。映射的哈希码定义为此映射 entrySet() 视图中每个项的哈希码之和。
+     * 这确保 m1.equals(m2) 对于任意两个映射 m1 和 m2 而言，都意味着 m1.hashCode()==m2.hashCode()，正如 Object.hashCode() 常规的要求
      *
-     * @return the hash code value for this map
-     * @see Map.Entry#hashCode()
-     * @see Object#equals(Object)
-     * @see #equals(Object)
+     * @return 此映射的哈希码值
      */
     int hashCode();
 
