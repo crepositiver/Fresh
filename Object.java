@@ -77,23 +77,12 @@ public class Object {
     }
 
     /**
-     * Creates and returns a copy of this object.  The precise meaning
-     * of "copy" may depend on the class of the object. The general
-     * intent is that, for any object {@code x}, the expression:
-     * <blockquote>
-     * <pre>
-     * x.clone() != x</pre></blockquote>
-     * will be true, and that the expression:
-     * <blockquote>
-     * <pre>
-     * x.clone().getClass() == x.getClass()</pre></blockquote>
-     * will be {@code true}, but these are not absolute requirements.
-     * While it is typically the case that:
-     * <blockquote>
-     * <pre>
-     * x.clone().equals(x)</pre></blockquote>
-     * will be {@code true}, this is not an absolute requirement.
-     * <p>
+     * 创建并返回此对象的一个副本。“副本”的准确含义可能依赖于对象的类。
+     * 这样做的目的是，对于任何对象 x，表达式： x.clone() != x 为 true
+     * 表达式：x.clone().getClass() == x.getClass() 也为 true 但这些并非必须要满足的要求。
+     * 一般情况下：x.clone().equals(x) 为 true，这并非必须要满足的要求。
+     *
+     *
      * By convention, the returned object should be obtained by calling
      * {@code super.clone}.  If a class and all of its superclasses (except
      * {@code Object}) obey this convention, it will be the case that
