@@ -82,194 +82,115 @@ public class Object {
      * 表达式：x.clone().getClass() == x.getClass() 也为 true 但这些并非必须要满足的要求。
      * 一般情况下：x.clone().equals(x) 为 true，这并非必须要满足的要求。
      *
+     * 按照惯例，返回的对象应该通过调用 super.clone 获得。
+     * 如果一个类及其所有的超类（Object 除外）都遵守此约定，x.clone().getClass() == x.getClass() 将是一个示例。
      *
-     * By convention, the returned object should be obtained by calling
-     * {@code super.clone}.  If a class and all of its superclasses (except
-     * {@code Object}) obey this convention, it will be the case that
-     * {@code x.clone().getClass() == x.getClass()}.
-     * <p>
-     * By convention, the object returned by this method should be independent
-     * of this object (which is being cloned).  To achieve this independence,
-     * it may be necessary to modify one or more fields of the object returned
-     * by {@code super.clone} before returning it.  Typically, this means
-     * copying any mutable objects that comprise the internal "deep structure"
-     * of the object being cloned and replacing the references to these
-     * objects with references to the copies.  If a class contains only
-     * primitive fields or references to immutable objects, then it is usually
-     * the case that no fields in the object returned by {@code super.clone}
-     * need to be modified.
-     * <p>
-     * The method {@code clone} for class {@code Object} performs a
-     * specific cloning operation. First, if the class of this object does
-     * not implement the interface {@code Cloneable}, then a
-     * {@code CloneNotSupportedException} is thrown. Note that all arrays
-     * are considered to implement the interface {@code Cloneable} and that
-     * the return type of the {@code clone} method of an array type {@code T[]}
-     * is {@code T[]} where T is any reference or primitive type.
-     * Otherwise, this method creates a new instance of the class of this
-     * object and initializes all its fields with exactly the contents of
-     * the corresponding fields of this object, as if by assignment; the
-     * contents of the fields are not themselves cloned. Thus, this method
-     * performs a "shallow copy" of this object, not a "deep copy" operation.
-     * <p>
-     * The class {@code Object} does not itself implement the interface
-     * {@code Cloneable}, so calling the {@code clone} method on an object
-     * whose class is {@code Object} will result in throwing an
-     * exception at run time.
+     * 按照惯例，此方法返回的对象应该独立于该对象（正被复制的对象）。在 super.clone 返回对象之前，有必要对该对象的一个或多个字段进行修改。
+     * 这意味着复制任何可变对象的内部“深层次结构”，并且用对副本的引用来替代对对象的引用。
+     * 如果一个类只包含基本字段或对不变对象的引用，则不需要修改 super.clone 返回的对象中的字段。
      *
-     * @return     a clone of this instance.
-     * @throws  CloneNotSupportedException  if the object's class does not
-     *               support the {@code Cloneable} interface. Subclasses
-     *               that override the {@code clone} method can also
-     *               throw this exception to indicate that an instance cannot
-     *               be cloned.
+     * Object 类的 clone 方法执行特定的复制操作。首先，如果此对象的类不能实现接口 Cloneable，则会抛出 CloneNotSupportedException。
+     * 注意，所有的数组都被视为实现接口 Cloneable，并且对基本类型的数组来说，clone方法返回相同的类型。
+     * 否则，此方法会创建此对象的类的一个新实例，并精确地用此对象的字段内容来初始化新实例。
+     * 这些字段的内容没有被自我复制。所以，此方法执行的是该对象的“浅复制”，而不“深复制”操作。
+     *
+     *Object 类本身不实现接口 Cloneable，所以在类为 Object 的对象上调用 clone 方法将会导致在运行时抛出异常。
+     * @return     此实例的一个副本
+     * @throws  CloneNotSupportedException  如果对象的类不支持 Cloneable 接口，则重写 clone 方法的子类也会抛出此异常，表示实例不能被复制。
+     *
      * @see java.lang.Cloneable
-     */
+     */ 
     protected native Object clone() throws CloneNotSupportedException;
 
     /**
-     * Returns a string representation of the object. In general, the
-     * {@code toString} method returns a string that
-     * "textually represents" this object. The result should
-     * be a concise but informative representation that is easy for a
-     * person to read.
-     * It is recommended that all subclasses override this method.
+     * 返回该对象的字符串表示。通常， toString 方法会返回一个“以文本方式表示”此对象的字符串。结果应是一个简明但易于读懂的信息表达式。
+     * 建议所有子类都重写此方法。
      * <p>
-     * The {@code toString} method for class {@code Object}
-     * returns a string consisting of the name of the class of which the
-     * object is an instance, the at-sign character `{@code @}', and
-     * the unsigned hexadecimal representation of the hash code of the
-     * object. In other words, this method returns a string equal to the
-     * value of:
-     * <blockquote>
-     * <pre>
+     * Object 类的 toString 方法返回一个字符串，该字符串由此实例对象的类名、at 标记符“@”和此对象哈希码的无符号十六进制数表示组成。
+     * 换句话说，该方法返回一个字符串，它的值等于：
      * getClass().getName() + '@' + Integer.toHexString(hashCode())
-     * </pre></blockquote>
      *
-     * @return  a string representation of the object.
+     * @return  该对象的字符串表示
      */
     public String toString() {
         return getClass().getName() + "@" + Integer.toHexString(hashCode());
     }
 
     /**
-     * Wakes up a single thread that is waiting on this object's
-     * monitor. If any threads are waiting on this object, one of them
-     * is chosen to be awakened. The choice is arbitrary and occurs at
-     * the discretion of the implementation. A thread waits on an object's
-     * monitor by calling one of the {@code wait} methods.
-     * <p>
-     * The awakened thread will not be able to proceed until the current
-     * thread relinquishes the lock on this object. The awakened thread will
-     * compete in the usual manner with any other threads that might be
-     * actively competing to synchronize on this object; for example, the
-     * awakened thread enjoys no reliable privilege or disadvantage in being
-     * the next thread to lock this object.
-     * <p>
-     * This method should only be called by a thread that is the owner
-     * of this object's monitor. A thread becomes the owner of the
-     * object's monitor in one of three ways:
-     * <ul>
-     * <li>By executing a synchronized instance method of that object.
-     * <li>By executing the body of a {@code synchronized} statement
-     *     that synchronizes on the object.
-     * <li>For objects of type {@code Class,} by executing a
-     *     synchronized static method of that class.
-     * </ul>
-     * <p>
-     * Only one thread at a time can own an object's monitor.
+     * 唤醒在此对象监视器上等待的单个线程。如果所有线程都在此对象上等待，则会选择唤醒其中一个线程。选择是任意性的，并由实现自行决定而发生。
+     * 线程通过调用其中一个 wait 方法，实现在对象的监视器上等待。
      *
-     * @throws  IllegalMonitorStateException  if the current thread is not
-     *               the owner of this object's monitor.
+     * 直到当前线程放弃此对象锁，被唤醒的线程才能执行。被唤醒的线程将以常规方式与在该对象上主动同步的其他所有线程进行竞争；
+     * 例如，唤醒的线程在作为锁定此对象的下一个线程方面没有可靠的特权或劣势。
+     *
+     * 此方法只应由作为此对象监视器的所有者的线程来调用。
+     * 通过以下三种方法之一，线程可以成为此对象监视器的所有者：
+     *
+     * 通过执行此对象的同步实例方法。
+     * 通过执行在此对象上进行同步的 synchronized 代码块。
+     * 对于 Class 类型的对象，可以通过执行该类的同步静态方法。
+     * 
+     * 一次只能有一个线程拥有对象的监视器。
+     *
+     * @throws  IllegalMonitorStateException  如果当前线程不是此对象监视器的所有者
      * @see        java.lang.Object#notifyAll()
      * @see        java.lang.Object#wait()
      */
     public final native void notify();
 
     /**
-     * Wakes up all threads that are waiting on this object's monitor. A
-     * thread waits on an object's monitor by calling one of the
-     * {@code wait} methods.
-     * <p>
-     * The awakened threads will not be able to proceed until the current
-     * thread relinquishes the lock on this object. The awakened threads
-     * will compete in the usual manner with any other threads that might
-     * be actively competing to synchronize on this object; for example,
-     * the awakened threads enjoy no reliable privilege or disadvantage in
-     * being the next thread to lock this object.
-     * <p>
-     * This method should only be called by a thread that is the owner
-     * of this object's monitor. See the {@code notify} method for a
-     * description of the ways in which a thread can become the owner of
-     * a monitor.
+     * 唤醒在此对象监视器上等待的所有线程。线程通过调用 wait 方法，在对象的监视器上等待。
      *
-     * @throws  IllegalMonitorStateException  if the current thread is not
-     *               the owner of this object's monitor.
+     * 直到当前线程放弃此对象上的锁定，才能继续执行被唤醒的线程。被唤醒的线程将以常规方式与在该对象上主动同步的其他所有线程进行竞争；
+     * 例如，唤醒的线程在作为锁定此对象的下一个线程方面没有可靠的特权或劣势。
+     *
+     * 此方法只应由作为此对象监视器的所有者的线程来调用。有关线程能够成为监视器所有者的方法的描述，请参阅 notify 方法。
+     *
+     * @throws  IllegalMonitorStateException  如果当前线程不是此对象监视器的所有者
      * @see        java.lang.Object#notify()
      * @see        java.lang.Object#wait()
      */
     public final native void notifyAll();
 
     /**
-     * Causes the current thread to wait until either another thread invokes the
-     * {@link java.lang.Object#notify()} method or the
-     * {@link java.lang.Object#notifyAll()} method for this object, or a
-     * specified amount of time has elapsed.
-     * <p>
-     * The current thread must own this object's monitor.
-     * <p>
-     * This method causes the current thread (call it <var>T</var>) to
-     * place itself in the wait set for this object and then to relinquish
-     * any and all synchronization claims on this object. Thread <var>T</var>
-     * becomes disabled for thread scheduling purposes and lies dormant
-     * until one of four things happens:
-     * <ul>
-     * <li>Some other thread invokes the {@code notify} method for this
-     * object and thread <var>T</var> happens to be arbitrarily chosen as
-     * the thread to be awakened.
-     * <li>Some other thread invokes the {@code notifyAll} method for this
-     * object.
-     * <li>Some other thread {@linkplain Thread#interrupt() interrupts}
-     * thread <var>T</var>.
-     * <li>The specified amount of real time has elapsed, more or less.  If
-     * {@code timeout} is zero, however, then real time is not taken into
-     * consideration and the thread simply waits until notified.
-     * </ul>
-     * The thread <var>T</var> is then removed from the wait set for this
-     * object and re-enabled for thread scheduling. It then competes in the
-     * usual manner with other threads for the right to synchronize on the
-     * object; once it has gained control of the object, all its
-     * synchronization claims on the object are restored to the status quo
-     * ante - that is, to the situation as of the time that the {@code wait}
-     * method was invoked. Thread <var>T</var> then returns from the
-     * invocation of the {@code wait} method. Thus, on return from the
-     * {@code wait} method, the synchronization state of the object and of
-     * thread {@code T} is exactly as it was when the {@code wait} method
-     * was invoked.
-     * <p>
+     * 直到其他线程调用此对象的 notify() 方法或 notifyAll() 方法，
+     * 或者超过指定的时间量前，导致当前线程等待。
+     * 
+     * 当前线程必须拥有此对象监视器。
+     * 
+     * 此方法导致当前线程（称之为 T）将其自身放置在对象的等待集中，然后放弃此对象上的所有同步要求。
+     * 出于线程调度目的，在发生以下四种情况之一前，线程 T 被禁用，且处于休眠状态：
+     * 
+     * 其他某个线程调用此对象的 notify 方法，并且线程 T 碰巧被任选为被唤醒的线程。
+     * 其他某个线程调用此对象的 notifyAll 方法。
+     * 其他某个线程中断线程 T。
+     * 指定的实际时间大约过去了。但是，如果 timeout 为零，则不考虑实际时间，在获得通知前该线程将一直等待。
+     * 
+     * 然后，从对象的等待集中删除线程 T，并重新进行线程调度。然后，该线程以常规方式与其他线程竞争，以获得在该对象上同步的权利。
+     * 一旦获得对该对象的控制权，该对象上的所有其同步声明都将被恢复到以前的状态，这就是调用 wait 方法时的情况。
+     * 然后，线程 T 从 wait 方法的调用中返回。该对象和线程 T 的同步状态与调用 wait 方法时的情况完全相同。
+     * 
      * A thread can also wake up without being notified, interrupted, or
      * timing out, a so-called <i>spurious wakeup</i>.  While this will rarely
      * occur in practice, applications must guard against it by testing for
      * the condition that should have caused the thread to be awakened, and
      * continuing to wait if the condition is not satisfied.  In other words,
      * waits should always occur in loops, like this one:
-     * <pre>
+     * 在没有被通知、中断或超时的情况下，线程还可以唤醒一个所谓的虚假唤醒 (spurious wakeup)。
+     * 虽然这种情况在实践中很少发生，但是应用程序必须通过对应该导致该线程被提醒的条件进行测试，以防止其发生。
+     * 即如果不满足该条件，则继续等待。换句话说，等待应总是发生在循环中，如下面的示例：
+     * 
      *     synchronized (obj) {
-     *         while (&lt;condition does not hold&gt;)
+     *         while (condition does not hold)
      *             obj.wait(timeout);
      *         ... // Perform action appropriate to condition
      *     }
-     * </pre>
-     * (For more information on this topic, see Section 3.2.3 in Doug Lea's
-     * "Concurrent Programming in Java (Second Edition)" (Addison-Wesley,
-     * 2000), or Item 50 in Joshua Bloch's "Effective Java Programming
-     * Language Guide" (Addison-Wesley, 2001).
+     * 
+     *（有关这一主题的更多信息，请参阅 Doug Lea 撰写的 Concurrent Programming in Java (Second Edition) (Addison-Wesley, 2000) 
+     * 中的第 3.2.3 节或 Joshua Bloch 撰写的 Effective Java Programming Language Guide (Addison-Wesley, 2001) 中的第 50 项。
      *
-     * <p>If the current thread is {@linkplain java.lang.Thread#interrupt()
-     * interrupted} by any thread before or while it is waiting, then an
-     * {@code InterruptedException} is thrown.  This exception is not
-     * thrown until the lock status of this object has been restored as
-     * described above.
+     * 如果当前线程在等待之前或在等待时被任何线程中断，则会抛出 InterruptedException。
+     * 在按上述形式恢复此对象的锁定状态时才会抛出此异常。
      *
      * <p>
      * Note that the {@code wait} method, as it places the current thread
