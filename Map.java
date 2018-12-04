@@ -381,7 +381,7 @@ public interface Map<K,V> {
      */
     int hashCode();
 
-    // Defaultable methods
+    // 默认实现方法
 
     /**
      * Returns the value to which the specified key is mapped, or

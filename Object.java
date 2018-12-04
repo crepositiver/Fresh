@@ -164,18 +164,12 @@ public class Object {
      * 其他某个线程调用此对象的 notify 方法，并且线程 T 碰巧被任选为被唤醒的线程。
      * 其他某个线程调用此对象的 notifyAll 方法。
      * 其他某个线程中断线程 T。
-     * 指定的实际时间大约过去了。但是，如果 timeout 为零，则不考虑实际时间，在获得通知前该线程将一直等待。
+     * 指定的实际时间大约过去了。但是，如果 timeout 为0，则不考虑实际时间，在获得通知前该线程将一直等待。
      * 
      * 然后，从对象的等待集中删除线程 T，并重新进行线程调度。然后，该线程以常规方式与其他线程竞争，以获得在该对象上同步的权利。
      * 一旦获得对该对象的控制权，该对象上的所有其同步声明都将被恢复到以前的状态，这就是调用 wait 方法时的情况。
      * 然后，线程 T 从 wait 方法的调用中返回。该对象和线程 T 的同步状态与调用 wait 方法时的情况完全相同。
      * 
-     * A thread can also wake up without being notified, interrupted, or
-     * timing out, a so-called <i>spurious wakeup</i>.  While this will rarely
-     * occur in practice, applications must guard against it by testing for
-     * the condition that should have caused the thread to be awakened, and
-     * continuing to wait if the condition is not satisfied.  In other words,
-     * waits should always occur in loops, like this one:
      * 在没有被通知、中断或超时的情况下，线程还可以唤醒一个所谓的虚假唤醒 (spurious wakeup)。
      * 虽然这种情况在实践中很少发生，但是应用程序必须通过对应该导致该线程被提醒的条件进行测试，以防止其发生。
      * 即如果不满足该条件，则继续等待。换句话说，等待应总是发生在循环中，如下面的示例：
@@ -192,93 +186,51 @@ public class Object {
      * 如果当前线程在等待之前或在等待时被任何线程中断，则会抛出 InterruptedException。
      * 在按上述形式恢复此对象的锁定状态时才会抛出此异常。
      *
-     * <p>
-     * Note that the {@code wait} method, as it places the current thread
-     * into the wait set for this object, unlocks only this object; any
-     * other objects on which the current thread may be synchronized remain
-     * locked while the thread waits.
-     * <p>
-     * This method should only be called by a thread that is the owner
-     * of this object's monitor. See the {@code notify} method for a
-     * description of the ways in which a thread can become the owner of
-     * a monitor.
+     * 注意，由于 wait 方法将当前线程放说入了对象的等待集中，所以它只能解除此对象的锁定。
+     * 当前线程的其他可以同步的对象在线程等待时仍处于锁定状态。
+     * 
+     * 此方法只应由作为此对象监视器的所有者的线程来调用。有关线程能够成为监视器所有者的方法的描述，请参阅 notify 方法。
      *
-     * @param      timeout   the maximum time to wait in milliseconds.
-     * @throws  IllegalArgumentException      if the value of timeout is
-     *               negative.
-     * @throws  IllegalMonitorStateException  if the current thread is not
-     *               the owner of the object's monitor.
-     * @throws  InterruptedException if any thread interrupted the
-     *             current thread before or while the current thread
-     *             was waiting for a notification.  The <i>interrupted
-     *             status</i> of the current thread is cleared when
-     *             this exception is thrown.
+     * @param      timeout   要等待的最长毫秒数时间
+     * @throws  IllegalArgumentException      如果 timeout 值为负
+     * @throws  IllegalMonitorStateException  如果当前线程不是此对象监视器的所有者
+     * @throws  InterruptedException 如果在当前线程等待通知时任何线程中断了它。在抛出此异常时，当前线程的中断状态被清除。
      * @see        java.lang.Object#notify()
      * @see        java.lang.Object#notifyAll()
      */
     public final native void wait(long timeout) throws InterruptedException;
 
     /**
-     * Causes the current thread to wait until another thread invokes the
-     * {@link java.lang.Object#notify()} method or the
-     * {@link java.lang.Object#notifyAll()} method for this object, or
-     * some other thread interrupts the current thread, or a certain
-     * amount of real time has elapsed.
-     * <p>
-     * This method is similar to the {@code wait} method of one
-     * argument, but it allows finer control over the amount of time to
-     * wait for a notification before giving up. The amount of real time,
-     * measured in nanoseconds, is given by:
-     * <blockquote>
-     * <pre>
-     * 1000000*timeout+nanos</pre></blockquote>
-     * <p>
-     * In all other respects, this method does the same thing as the
-     * method {@link #wait(long)} of one argument. In particular,
-     * {@code wait(0, 0)} means the same thing as {@code wait(0)}.
-     * <p>
-     * The current thread must own this object's monitor. The thread
-     * releases ownership of this monitor and waits until either of the
-     * following two conditions has occurred:
-     * <ul>
-     * <li>Another thread notifies threads waiting on this object's monitor
-     *     to wake up either through a call to the {@code notify} method
-     *     or the {@code notifyAll} method.
-     * <li>The timeout period, specified by {@code timeout}
-     *     milliseconds plus {@code nanos} nanoseconds arguments, has
-     *     elapsed.
-     * </ul>
-     * <p>
-     * The thread then waits until it can re-obtain ownership of the
-     * monitor and resumes execution.
-     * <p>
-     * As in the one argument version, interrupts and spurious wakeups are
-     * possible, and this method should always be used in a loop:
-     * <pre>
+     * 直到其他线程调用此对象的 notify() 方法或 notifyAll() 方法，
+     * 或者超过指定的时间量前，导致当前线程等待。
+     * 
+     * 此方法类似于单参数的 wait 方法，但它允许细致地控制在放弃等待通知之前的时间值。
+     * 计算微秒的方法如下：
+     * 1000000*timeout+nanos
+     * 
+     * 在其他所有方面，此方法执行的操作与带有一个参数的 wait(long) 方法相同。需要特别指出的是，wait(0, 0) 与 wait(0) 相同
+     * 
+     * 当前线程必须拥有此对象监视器。该线程发布对此监视器的所有权，并等待下面两个条件之一发生：
+     * 1 其他线程通过调用 notify 或 notifyAll 方法通知在此对象的监视器上等待的线程醒来。
+     * 2 timeout 毫秒值与 nanos 毫微秒参数值之和指定的超时时间已用完。
+     * 
+     * 然后，该线程等到重新获得对监视器的所有权后才能继续执行。
+     * 
+     * 像单参数的版本一样，实现中断和虚假唤醒是有可能的，并且此方法应始终在循环中使用：
+     * 
      *     synchronized (obj) {
-     *         while (&lt;condition does not hold&gt;)
+     *         while (condition does not hold)
      *             obj.wait(timeout, nanos);
      *         ... // Perform action appropriate to condition
      *     }
-     * </pre>
-     * This method should only be called by a thread that is the owner
-     * of this object's monitor. See the {@code notify} method for a
-     * description of the ways in which a thread can become the owner of
-     * a monitor.
+     * 
+     * 此方法只应由作为此对象监视器的所有者的线程来调用。有关线程能够成为监视器所有者的方法的描述，请参阅 notify 方法。
      *
-     * @param      timeout   the maximum time to wait in milliseconds.
-     * @param      nanos      additional time, in nanoseconds range
-     *                       0-999999.
-     * @throws  IllegalArgumentException      if the value of timeout is
-     *                      negative or the value of nanos is
-     *                      not in the range 0-999999.
-     * @throws  IllegalMonitorStateException  if the current thread is not
-     *               the owner of this object's monitor.
-     * @throws  InterruptedException if any thread interrupted the
-     *             current thread before or while the current thread
-     *             was waiting for a notification.  The <i>interrupted
-     *             status</i> of the current thread is cleared when
-     *             this exception is thrown.
+     * @param      timeout   要等待的最长毫秒数时间
+     * @param      nanos      额外时间（以毫微秒为单位，范围是 0-999999）
+     * @throws  IllegalArgumentException       如果超时值是负数，或者毫微秒值不在 0-999999 范围内
+     * @throws  IllegalMonitorStateException  如果当前线程不是此对象监视器的所有者。
+     * @throws  InterruptedException 如果在当前线程等待通知时任何线程中断了它。在抛出此异常时，当前线程的中断状态被清除。
      */
     public final void wait(long timeout, int nanos) throws InterruptedException {
         if (timeout < 0) {
@@ -289,7 +241,8 @@ public class Object {
             throw new IllegalArgumentException(
                                 "nanosecond timeout value out of range");
         }
-
+        // 这么写的原因可能是操作系统对线程最低的休眠单位就是毫秒吧
+        // 这样的话这个方法重载的意义不大
         if (nanos > 0) {
             timeout++;
         }
@@ -298,40 +251,24 @@ public class Object {
     }
 
     /**
-     * Causes the current thread to wait until another thread invokes the
-     * {@link java.lang.Object#notify()} method or the
-     * {@link java.lang.Object#notifyAll()} method for this object.
-     * In other words, this method behaves exactly as if it simply
-     * performs the call {@code wait(0)}.
-     * <p>
-     * The current thread must own this object's monitor. The thread
-     * releases ownership of this monitor and waits until another thread
-     * notifies threads waiting on this object's monitor to wake up
-     * either through a call to the {@code notify} method or the
-     * {@code notifyAll} method. The thread then waits until it can
-     * re-obtain ownership of the monitor and resumes execution.
-     * <p>
-     * As in the one argument version, interrupts and spurious wakeups are
-     * possible, and this method should always be used in a loop:
-     * <pre>
+     * 在其他线程调用此对象的 notify() 方法或 notifyAll() 方法前，导致当前线程等待。
+     * 换句话说，此方法的行为就好像它仅执行 wait(0) 调用一样。
+     * 
+     * 当前线程必须拥有此对象监视器。该线程发布对此监视器的所有权并等待，直到其他线程通过调用 notify 或 notifyAll 方法
+     * 通知在此对象的监视器上等待的线程醒来。然后该线程将等到重新获得对监视器的所有权后才能继续执行。
+     * 
+     * 像单参数的版本一样，实现中断和虚假唤醒是有可能的，并且此方法应始终在循环中使用：
+     * 
      *     synchronized (obj) {
-     *         while (&lt;condition does not hold&gt;)
+     *         while (condition does not hold)
      *             obj.wait();
      *         ... // Perform action appropriate to condition
      *     }
-     * </pre>
-     * This method should only be called by a thread that is the owner
-     * of this object's monitor. See the {@code notify} method for a
-     * description of the ways in which a thread can become the owner of
-     * a monitor.
+     * 
+     * 此方法只应由作为此对象监视器的所有者的线程来调用。有关线程能够成为监视器所有者的方法的描述，请参阅 notify 方法。
      *
-     * @throws  IllegalMonitorStateException  if the current thread is not
-     *               the owner of the object's monitor.
-     * @throws  InterruptedException if any thread interrupted the
-     *             current thread before or while the current thread
-     *             was waiting for a notification.  The <i>interrupted
-     *             status</i> of the current thread is cleared when
-     *             this exception is thrown.
+     * @throws  IllegalMonitorStateException  如果当前线程不是此对象监视器的所有者。
+     * @throws  InterruptedException 如果在当前线程等待通知时任何线程中断了它。在抛出此异常时，当前线程的中断状态被清除。
      * @see        java.lang.Object#notify()
      * @see        java.lang.Object#notifyAll()
      */
@@ -340,51 +277,28 @@ public class Object {
     }
 
     /**
-     * Called by the garbage collector on an object when garbage collection
-     * determines that there are no more references to the object.
-     * A subclass overrides the {@code finalize} method to dispose of
-     * system resources or to perform other cleanup.
-     * <p>
-     * The general contract of {@code finalize} is that it is invoked
-     * if and when the Java&trade; virtual
-     * machine has determined that there is no longer any
-     * means by which this object can be accessed by any thread that has
-     * not yet died, except as a result of an action taken by the
-     * finalization of some other object or class which is ready to be
-     * finalized. The {@code finalize} method may take any action, including
-     * making this object available again to other threads; the usual purpose
-     * of {@code finalize}, however, is to perform cleanup actions before
-     * the object is irrevocably discarded. For example, the finalize method
-     * for an object that represents an input/output connection might perform
-     * explicit I/O transactions to break the connection before the object is
-     * permanently discarded.
-     * <p>
-     * The {@code finalize} method of class {@code Object} performs no
-     * special action; it simply returns normally. Subclasses of
-     * {@code Object} may override this definition.
-     * <p>
-     * The Java programming language does not guarantee which thread will
-     * invoke the {@code finalize} method for any given object. It is
-     * guaranteed, however, that the thread that invokes finalize will not
-     * be holding any user-visible synchronization locks when finalize is
-     * invoked. If an uncaught exception is thrown by the finalize method,
-     * the exception is ignored and finalization of that object terminates.
-     * <p>
-     * After the {@code finalize} method has been invoked for an object, no
-     * further action is taken until the Java virtual machine has again
-     * determined that there is no longer any means by which this object can
-     * be accessed by any thread that has not yet died, including possible
-     * actions by other objects or classes which are ready to be finalized,
-     * at which point the object may be discarded.
-     * <p>
-     * The {@code finalize} method is never invoked more than once by a Java
-     * virtual machine for any given object.
-     * <p>
-     * Any exception thrown by the {@code finalize} method causes
-     * the finalization of this object to be halted, but is otherwise
-     * ignored.
+     * 当垃圾回收器确定不存在对该对象的更多引用时，由对象的垃圾回收器调用此方法。
+     * 子类重写 finalize 方法，以配置系统资源或执行其他清除。
      *
-     * @throws Throwable the {@code Exception} raised by this method
+     * finalize 方法常规合约为：虚拟机认为尚未终止的任何线程无法再通过任何方法访问此对象时，调用
+     * 此方法，除非是做为准备终止的其他某个对象或类的终结操作的结果。
+     * finalize 方法可以采取任何操作，其中包括再次使其他线程可用此对象；
+     * 然而，finalize 的主要目的是在不可撤消地丢弃对象之前执行清除操作。
+     * 例如，表示输入/输出连接对象的 finalize 方法可执行显式 I/O 事务在永久丢弃对象之前中断连接。
+     *
+     * Object 类的 finalize 方法不执行特殊操作；它仅是常规返回。Object 的子类可以重写此方法。
+     * 
+     * Java 编程语言不保证哪个线程将调用某个给定对象的 finalize 方法。但可以保证在调用 finalize 时，
+     * 线程将不会持有任何用户可见的同步锁定。如果 finalize 方法抛出未捕获的异常，那么该异常将被忽略，并且该对象的终结操作将终止
+     * 
+     * 在启用某个对象的 finalize 方法后，将不会执行进一步操作，直到 Java 虚拟机再次确定尚未终止的任何线程无法再通过任何方法访问此对象，
+     * 并且包括由准备终止的其他对象或类执行的可能操作。此时，对象可能被丢弃。
+     * 
+     * 对于任何给定对象，Java 虚拟机最多只调用一次 finalize 方法。
+     * 
+     * finalize 方法抛出的任何异常都会导致此对象的终结操作停止，但可以通过其他方法忽略它。
+     *
+     * @throws 此方法抛出的 Exception
      * @see java.lang.ref.WeakReference
      * @see java.lang.ref.PhantomReference
      * @jls 12.6 Finalization of Class Instances
