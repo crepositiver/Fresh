@@ -12,13 +12,9 @@ import java.util.function.Function;
 import sun.misc.SharedSecrets;
 
 /**
- * Hash table based implementation of the <tt>Map</tt> interface.  This
- * implementation provides all of the optional map operations, and permits
- * <tt>null</tt> values and the <tt>null</tt> key.  (The <tt>HashMap</tt>
- * class is roughly equivalent to <tt>Hashtable</tt>, except that it is
- * unsynchronized and permits nulls.)  This class makes no guarantees as to
- * the order of the map; in particular, it does not guarantee that the order
- * will remain constant over time.
+ * 基于哈希表的 Map 接口的实现。此实现提供所有可选的map操作,并允许使用 null 值和 null 键。
+ *（除了非同步和允许使用 null 之外，HashMap 类与 Hashtable 大致相同。）
+ * 此类不保证映射的顺序，特别是它不保证该顺序恒久不变。
  *
  * <p>This implementation provides constant-time performance for the basic
  * operations (<tt>get</tt> and <tt>put</tt>), assuming the hash function
