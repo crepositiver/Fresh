@@ -20,16 +20,9 @@ import sun.misc.SharedSecrets;
  * 迭代 collection 视图所需的时间与 HashMap 实例的“容量”（桶的数量）及其大小（键-值映射关系数）成比例。
  * 所以，如果迭代性能很重要，则不要将初始容量设置得太高（或将加载因子设置得太低）。
  *
- * <p>An instance of <tt>HashMap</tt> has two parameters that affect its
- * performance: <i>initial capacity</i> and <i>load factor</i>.  The
- * <i>capacity</i> is the number of buckets in the hash table, and the initial
- * capacity is simply the capacity at the time the hash table is created.  The
- * <i>load factor</i> is a measure of how full the hash table is allowed to
- * get before its capacity is automatically increased.  When the number of
- * entries in the hash table exceeds the product of the load factor and the
- * current capacity, the hash table is <i>rehashed</i> (that is, internal data
- * structures are rebuilt) so that the hash table has approximately twice the
- * number of buckets.
+ * HashMap 的实例有两个参数影响其性能：初始容量和负载因子。容量是哈希表中桶的数量，初始容量只是哈希表在创建时的容量。
+ * 负载因子 是哈希表在其容量扩容之前可以达到多满的一种尺度。当哈希表中的条目数超出了加载因子与当前容量的乘积时，则要对该哈希表进行 rehash(扩容) 
+ * 操作（即重建内部数据结构），从而哈希表将具有大约两倍的桶数。
  *
  * <p>As a general rule, the default load factor (.75) offers a good
  * tradeoff between time and space costs.  Higher values decrease the
