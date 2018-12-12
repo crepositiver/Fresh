@@ -339,8 +339,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     /* ---------------- Fields -------------- */
 
     /**
-     * The table, initialized on first use, and resized as
-     * necessary. When allocated, length is always a power of two.
+     * 第一次初始化时需要进行扩容操作。长度总是2的幂。
      * (We also tolerate length zero in some operations to allow
      * bootstrapping mechanics that are currently not needed.)
      */
@@ -353,21 +352,18 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     transient Set<Map.Entry<K,V>> entrySet;
 
     /**
-     * The number of key-value mappings contained in this map.
+     * map中的key-value键值对数量(即table.length)
      */
     transient int size;
 
     /**
-     * The number of times this HashMap has been structurally modified
-     * Structural modifications are those that change the number of mappings in
-     * the HashMap or otherwise modify its internal structure (e.g.,
-     * rehash).  This field is used to make iterators on Collection-views of
-     * the HashMap fail-fast.  (See ConcurrentModificationException).
+     * hashMap结构被修改的次数。结构修改指改变映射关系的数量或者其它修改内部结构的操作(例如rehash方法)。
+     * 该字段用于在hashmap的fail-fast情况下，基于Collection-views生成迭代器。
      */
     transient int modCount;
 
     /**
-     * The next size value at which to resize (capacity * load factor).
+     * 扩容的阈值 (capacity * load factor).
      *
      * @serial
      */
@@ -378,7 +374,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     int threshold;
 
     /**
-     * The load factor for the hash table.
+     * 负载因子
      *
      * @serial
      */
@@ -542,53 +538,55 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     }
 
     /**
-     * Associates the specified value with the specified key in this map.
-     * If the map previously contained a mapping for the key, the old
-     * value is replaced.
+     * 在map中添加key-value键值对，如果key已存在，则替换value
      *
-     * @param key key with which the specified value is to be associated
-     * @param value value to be associated with the specified key
-     * @return the previous value associated with <tt>key</tt>, or
-     *         <tt>null</tt> if there was no mapping for <tt>key</tt>.
-     *         (A <tt>null</tt> return can also indicate that the map
-     *         previously associated <tt>null</tt> with <tt>key</tt>.)
+     * @param key 键值对中的key
+     * @param value 键值对中的value
+     * @return 如果map中已存在key则返回此key对应的value,否则返回null
+     *         (返回null也可能是已存在的key关键的value值就是null)
      */
     public V put(K key, V value) {
         return putVal(hash(key), key, value, false, true);
     }
 
     /**
-     * Implements Map.put and related methods
+     * Map.put和相关方法的实现
      *
      * @param hash hash for key
      * @param key the key
      * @param value the value to put
-     * @param onlyIfAbsent if true, don't change existing value
-     * @param evict if false, the table is in creation mode.
+     * @param onlyIfAbsent 如果为true，不改变已存在的value
+     * @param evict 如果为false,代表table属于创建模式
      * @return previous value, or null if none
      */
-    final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
+    final V  putVal(int hash, K key, V value, boolean onlyIfAbsent,
                    boolean evict) {
         Node<K,V>[] tab; Node<K,V> p; int n, i;
+        //如果table为空，则先进行一次扩容操作
         if ((tab = table) == null || (n = tab.length) == 0)
             n = (tab = resize()).length;
+        //通过(n - 1) & hash来计算tab的下标位置，判断此位置是否为null，不为null代表hash碰撞了
         if ((p = tab[i = (n - 1) & hash]) == null)
             tab[i] = newNode(hash, key, value, null);
-        else {
+        else {//hash碰撞，java7使用单链表解决碰撞问题，java8增加了红黑树                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
             Node<K,V> e; K k;
+            //通过key判断是否与桶的第一个Node相等，满足的话e指向此node,后续通过onlyIfAbsent来确定是否改变value
             if (p.hash == hash &&
                 ((k = p.key) == key || (key != null && key.equals(k))))
                 e = p;
-            else if (p instanceof TreeNode)
+            else if (p instanceof TreeNode)//如果p结点是树结构，则将此对象添加到子树
                 e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
             else {
                 for (int binCount = 0; ; ++binCount) {
-                    if ((e = p.next) == null) {
+                    if ((e = p.next) == null) {//判断桶的下一个结点是否为null
                         p.next = newNode(hash, key, value, null);
+                        //binCount = 0 代表当前桶只有2个结点。TREEIFY_THRESHOLD - 1 = 7 所以 binCount=7时代表当前桶只有9个结点
+                        //故链表的长度大于8时，桶将由单向链表结构转化为树结构
                         if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
                             treeifyBin(tab, hash);
                         break;
                     }
+                    //通过key判断是否与桶的当前Node结点e相等，相等代表找到已存在key的结点，后续决定是否替换value即可
                     if (e.hash == hash &&
                         ((k = e.key) == key || (key != null && key.equals(k))))
                         break;
@@ -597,16 +595,19 @@ public class HashMap<K,V> extends AbstractMap<K,V>
             }
             if (e != null) { // existing mapping for key
                 V oldValue = e.value;
-                if (!onlyIfAbsent || oldValue == null)
+                if (!onlyIfAbsent || oldValue == null)//onlyIfAbsent为false时必然替换value
                     e.value = value;
-                afterNodeAccess(e);
+                afterNodeAccess(e);//为LinkedHashMap所准备的回调方法
                 return oldValue;
             }
         }
+        //未发生hash碰撞时的情况
+        //记录结构被修改的次数
         ++modCount;
+        //table的size大于阈值进行扩容操作
         if (++size > threshold)
             resize();
-        afterNodeInsertion(evict);
+        afterNodeInsertion(evict);//为LinkedHashMap所准备的回调方法
         return null;
     }
 
@@ -694,16 +695,16 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     }
 
     /**
-     * Replaces all linked nodes in bin at index for given hash unless
-     * table is too small, in which case resizes instead.
+     * 除非table太小，进行扩容操作。否则将通过hash计算出的index位置的桶的所有结点全部替换
      */
     final void treeifyBin(Node<K,V>[] tab, int hash) {
         int n, index; Node<K,V> e;
-        if (tab == null || (n = tab.length) < MIN_TREEIFY_CAPACITY)
+        // tab为空或长度小于64则进行扩容操作
+        if (tab == null || (n = tab.length) < MIN_TREEIFY_CAPACITY)//MIN_TREEIFY_CAPACITY=64
             resize();
-        else if ((e = tab[index = (n - 1) & hash]) != null) {
+        else if ((e = tab[index = (n - 1) & hash]) != null) {//如果当前桶不为空
             TreeNode<K,V> hd = null, tl = null;
-            do {
+            do {//循环将当前桶的所有Node结点替换成TreeNode结点
                 TreeNode<K,V> p = replacementTreeNode(e, null);
                 if (tl == null)
                     hd = p;
@@ -713,6 +714,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                 }
                 tl = p;
             } while ((e = e.next) != null);
+            //头结点不为空则将单链表转换成树
             if ((tab[index] = hd) != null)
                 hd.treeify(tab);
         }
@@ -1849,7 +1851,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         }
 
         /**
-         * Forms tree of the nodes linked from this node.
+         * 将关联的node结点构成树
          * @return root of tree
          */
         final void treeify(Node<K,V>[] tab) {
