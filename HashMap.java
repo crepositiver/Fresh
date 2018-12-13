@@ -432,24 +432,28 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     }
 
     /**
-     * Implements Map.putAll and Map constructor
+     * Map.putAll方法的实现和构造器
      *
      * @param m the map
-     * @param evict false when initially constructing this map, else
-     * true (relayed to method afterNodeInsertion).
+     * @param evict 初始构造map时为false,否则为true (传递到 afterNodeInsertion 方法)
+     * 
      */
     final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
         int s = m.size();
         if (s > 0) {
             if (table == null) { // pre-size
+                //将m的size当成当前map的阈值，计算出当前map所需的合适容量
                 float ft = ((float)s / loadFactor) + 1.0F;
-                int t = ((ft < (float)MAXIMUM_CAPACITY) ?
+                //MAXIMUM_CAPACITY=2的30次方
+                int t = ((ft < (float)MAXIMUM_CAPACITY) ? 
                          (int)ft : MAXIMUM_CAPACITY);
+                //如果当前map所需的合适容量已经大于当前阈值，需要通过m的size来计算出新的阈值
                 if (t > threshold)
                     threshold = tableSizeFor(t);
             }
-            else if (s > threshold)
+            else if (s > threshold)//容量大于阈值则扩容。此处不扩容也没关系，因为putVal方法有扩容操作
                 resize();
+            //循环将每一组键值对都put到当前map中
             for (Map.Entry<? extends K, ? extends V> e : m.entrySet()) {
                 K key = e.getKey();
                 V value = e.getValue();
