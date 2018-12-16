@@ -24,16 +24,10 @@ import sun.misc.SharedSecrets;
  * 负载因子 是哈希表在其容量扩容之前可以达到多满的一种尺度。当哈希表中的条目数超出了加载因子与当前容量的乘积时，则要对该哈希表进行 rehash(扩容) 
  * 操作（即重建内部数据结构），从而哈希表将具有大约两倍的桶数。
  *
- * <p>As a general rule, the default load factor (.75) offers a good
- * tradeoff between time and space costs.  Higher values decrease the
- * space overhead but increase the lookup cost (reflected in most of
- * the operations of the <tt>HashMap</tt> class, including
- * <tt>get</tt> and <tt>put</tt>).  The expected number of entries in
- * the map and its load factor should be taken into account when
- * setting its initial capacity, so as to minimize the number of
- * rehash operations.  If the initial capacity is greater than the
- * maximum number of entries divided by the load factor, no rehash
- * operations will ever occur.
+ * 通常，默认负载因子 (0.75) 在时间和空间成本上是一种折衷方式。负载因子过高虽然减少了空间开销，但增加了查询代价。
+ * (在大多数 HashMap 类的操作中，包括 get 和 put 操作，都反映了这一点)。
+ * 在设置初始容量时应该考虑到映射关系数及其负载因子，以便最大限度地减少 rehash 操作次数。
+ * 如果初始容量大于最大映射数除以负载因子，则不会发生 rehash 操作。
  *
  * <p>If many mappings are to be stored in a <tt>HashMap</tt>
  * instance, creating it with a sufficiently large capacity will allow
