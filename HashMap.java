@@ -37,6 +37,8 @@ import sun.misc.SharedSecrets;
  * down performance of any hash table. To ameliorate impact, when keys
  * are {@link Comparable}, this class may use comparison order among
  * keys to help break ties.
+ * 
+ * 如果需要存储大量映射关系到hashmap实例中，创建hashmap时使用一个足够大的初始化容量设置，比起自动扩容来增加表的容量来说更加高效。
  *
  * <p><strong>Note that this implementation is not synchronized.</strong>
  * If multiple threads access a hash map concurrently, and at least one of
