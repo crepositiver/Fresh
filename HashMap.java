@@ -28,17 +28,11 @@ import sun.misc.SharedSecrets;
  * (在大多数 HashMap 类的操作中，包括 get 和 put 操作，都反映了这一点)。
  * 在设置初始容量时应该考虑到映射关系数及其负载因子，以便最大限度地减少 rehash 操作次数。
  * 如果初始容量大于最大映射数除以负载因子，则不会发生 rehash 操作。
- *
- * <p>If many mappings are to be stored in a <tt>HashMap</tt>
- * instance, creating it with a sufficiently large capacity will allow
- * the mappings to be stored more efficiently than letting it perform
- * automatic rehashing as needed to grow the table.  Note that using
- * many keys with the same {@code hashCode()} is a sure way to slow
- * down performance of any hash table. To ameliorate impact, when keys
- * are {@link Comparable}, this class may use comparison order among
- * keys to help break ties.
  * 
  * 如果需要存储大量映射关系到hashmap实例中，创建hashmap时使用一个足够大的初始化容量设置，比起自动扩容来增加表的容量来说更加高效。
+ * 使用大量具有同样hashcode的key对于hash table之类的结构来说都会降低性能。
+ * 当key是可比较时，可能会用key之间的比较顺序来打破纽带，有助于性能的改善。
+ * 
  *
  * <p><strong>Note that this implementation is not synchronized.</strong>
  * If multiple threads access a hash map concurrently, and at least one of
